@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import auth from "../../firebase/firebase.config";
 import { useState } from "react";
@@ -14,10 +15,12 @@ const Register = () => {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+
+    const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const checkbox = e.target.checkbox.checked;
-    console.log(email, password, checkbox);
+    console.log(name, email, password, checkbox);
 
     // reset error
     setRegisterError("");
@@ -42,10 +45,21 @@ const Register = () => {
         console.log(result.user);
         setSuccess("User created successfully");
 
+        // update profile
+        updateProfile(result.user, {
+          displayName: name,
+          photoURL: "https://example.com/jane-q-user/profile.jpg",
+        })
+          .then(() => {
+            console.log("profile updated");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
         // send verification email
-        sendEmailVerification(result.user)
-        .then(()=>{
-          alert('Please check your email and verify your account.')
+        sendEmailVerification(result.user).then(() => {
+          alert("Please check your email and verify your account.");
         });
       })
       .catch((err) => {
@@ -63,6 +77,15 @@ const Register = () => {
         >
           <input
             className="px-4 py-2 rounded-lg w-full"
+            type="text"
+            name="name"
+            placeholder="Name"
+            required
+          />
+          <br />
+          <br />
+          <input
+            className="px-4 py-2 rounded-lg w-full"
             type="email"
             name="email"
             placeholder="Email Address"
@@ -70,6 +93,7 @@ const Register = () => {
           />
           <br />
           <br />
+
           <div className="relative">
             <input
               className="px-4 py-2 rounded-lg w-full"
