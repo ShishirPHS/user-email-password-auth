@@ -2,6 +2,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase/firebase.config";
 import { useState } from "react";
 import { BiSolidShow, BiSolidHide } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [registerError, setRegisterError] = useState("");
@@ -49,7 +50,7 @@ const Register = () => {
         <h2 className="text-center mb-5">Please Register</h2>
         <form
           onSubmit={handleFormSubmit}
-          className="bg-gray-300 px-4 py-4 rounded-lg"
+          className="bg-gray-300 px-6 py-10 rounded-lg"
         >
           <input
             className="px-4 py-2 rounded-lg w-full"
@@ -85,6 +86,12 @@ const Register = () => {
             <label htmlFor="terms">Accept our Terms and Conditions</label>
           </div>
           <input className="btn w-full" type="submit" value="Register" />
+          <p className="mt-5">
+            Already have an account? Please{" "}
+            <Link className="text-blue-800 hover:underline" to="/login">
+              Login
+            </Link>
+          </p>
         </form>
         {registerError && <p className="text-red-600">{registerError}</p>}
         {success && <p className="text-green-600">{success}</p>}
