@@ -1,11 +1,16 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import auth from "../../firebase/firebase.config";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Login = () => {
   const [registerError, setRegisterError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const emailRef = useRef(null);
 
   const handleLogIn = (e) => {
     e.preventDefault();
@@ -31,6 +36,26 @@ const Login = () => {
       });
   };
 
+  const handleForgotPassword = () => {
+    const email = emailRef.current.value;
+    if (!email) {
+      alert("Please provide an email.");
+      console.log("Please provide an email", email);
+      return;
+    } else if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email)) {
+      alert("Please provide a valid email.");
+      console.log("send valid email");
+      return;
+    }
+
+    // send validation error
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("Please check your email");
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="container mx-auto">
       <h2 className="text-center text-3xl py-4">Please login</h2>
@@ -45,6 +70,7 @@ const Login = () => {
                 <input
                   type="email"
                   name="email"
+                  ref={emailRef}
                   placeholder="email"
                   className="input input-bordered"
                   required
@@ -62,7 +88,11 @@ const Login = () => {
                   required
                 />
                 <label className="label">
-                  <a href="#" className="label-text-alt link link-hover">
+                  <a
+                    onClick={handleForgotPassword}
+                    href="#"
+                    className="label-text-alt link link-hover"
+                  >
                     Forgot password?
                   </a>
                 </label>
